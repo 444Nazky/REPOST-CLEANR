@@ -236,8 +236,7 @@ function detectUserCountry() {
     console.log("Erro ao detectar país via timezone:", error);
   }
 
-  try {
-    // Método 2: Usar o locale do navegador
+
     const locale = Intl.DateTimeFormat().resolvedOptions().locale;
     const localeCountryMap = {
       "pt-BR": "BR",
@@ -301,17 +300,16 @@ function detectUserCountry() {
   }
 
   try {
-    // Método 3: Usar navigator.language como fallback
+
     const language = navigator.language || navigator.userLanguage;
     if (language.includes("-")) {
       const countryCode = language.split("-")[1].toUpperCase();
-      // Verificar se o código de país existe no nosso mapeamento
+
       if (COUNTRY_CURRENCY_MAP[countryCode]) {
         return countryCode;
       }
     }
 
-    // Mapeamento básico por idioma
     const languageCountryMap = {
       pt: "BR",
       en: "US",
@@ -354,9 +352,6 @@ function detectUserCountry() {
 function openDonation() {
   const countryCode = detectUserCountry();
   const currencyCode = COUNTRY_CURRENCY_MAP[countryCode] || "USD";
-
-  const donationUrl = `https://www.paypal.com/donate/?cmd=_donations&business=S34UMJ23659VY&currency_code=${currencyCode}`;
-
   chrome.tabs.create({ url: donationUrl });
 }
 

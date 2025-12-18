@@ -1,19 +1,47 @@
+
 const initiateRepostsVideosRemoval = async () => {
   const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  // Define stopScript first to avoid hoisting issues
+  const stopScript = (message, error = "") => {
+    let logMessage = `${message}. Reloading page...`;
+    if (error) {
+      console.log({ message: logMessage, error });
+    } else {
+      console.log(logMessage);
+    }
+    setTimeout(() => window.location.reload(), 1000);
+  };
 
   const waitForElement = async (selector, timeout = 10000, interval = 200) => {
     const start = Date.now();
     return new Promise((resolve, reject) => {
       const check = () => {
-        const element = document.querySelector(selector);
-        if (element) return resolve(element);
-        if (Date.now() - start >= timeout) {
-          return reject(new Error(`Timeout: Element ${selector} not found`));
+        try {
+          const element = document.querySelector(selector);
+          if (element) return resolve(element);
+          if (Date.now() - start >= timeout) {
+            return reject(new Error(`Timeout: Element ${selector} not found`));
+          }
+          setTimeout(check, interval);
+        } catch (err) {
+          reject(err);
         }
-        setTimeout(check, interval);
       };
       check();
     });
+  };
+
+  const closeVideo = async () => {
+    try {
+      const closeVideoButton = await waitForElement('[data-e2e="browse-close"]', 5000);
+      closeVideoButton.click();
+      console.log("Closed video view.");
+      stopScript("All actions executed successfully");
+    } catch (error) {
+      console.log("Could not find the close video button, but continuing...");
+      stopScript("Process completed - could not close video automatically");
+    }
   };
 
   const clickProfileTab = async () => {
@@ -24,10 +52,7 @@ const initiateRepostsVideosRemoval = async () => {
       await sleep(5000);
       return true;
     } catch (error) {
-      stopScript(
-        "The 'Profile' button was not found on the page in time",
-        error
-      );
+      stopScript("The 'Profile' button was not found on the page in time", error);
       return false;
     }
   };
@@ -57,61 +82,42 @@ const initiateRepostsVideosRemoval = async () => {
   const clickNextRepostAndRemove = async () => {
     try {
       const interval = setInterval(async () => {
-        const nextVideoButton = document.querySelector(
-          '[data-e2e="arrow-right"]'
-        );
-        const repostButton = document.querySelector(
-          '[data-e2e="video-share-repost"]'
-        );
+        try {
+          const nextVideoButton = document.querySelector(
+            '[data-e2e="arrow-right"]'
+          );
+          const repostButton = document.querySelector(
+            '[data-e2e="video-share-repost"]'
+          );
 
-        if (!repostButton) {
+          if (!repostButton) {
+            clearInterval(interval);
+            console.log("No more repost buttons found");
+            await closeVideo();
+            return;
+          }
+
+          repostButton.click();
+          console.log("Removed repost from current video.");
+
+          if (!nextVideoButton || nextVideoButton.disabled) {
+            clearInterval(interval);
+            console.log("No next video button or it's disabled");
+            await closeVideo();
+            return;
+          }
+
+          nextVideoButton.click();
+          console.log("Moved to next reposted video.");
+        } catch (innerError) {
+          console.log("Error in processing loop:", innerError);
           clearInterval(interval);
-          stopScript("Repost button not found");
-          return;
+          stopScript("Error during reposted video removal", innerError);
         }
-
-        repostButton.click();
-        console.log("Removed repost from current video.");
-
-        if (!nextVideoButton || nextVideoButton.disabled) {
-          clearInterval(interval);
-          closeVideo();
-          return;
-        }
-
-        nextVideoButton.click();
-        console.log("Moved to next reposted video.");
       }, 2000);
     } catch (error) {
       stopScript("Error during reposted video removal", error);
     }
-  };
-
-  const closeVideo = async () => {
-    try {
-      const closeVideoButton = document.querySelector(
-        '[data-e2e="browse-close"]'
-      );
-      if (closeVideoButton) {
-        closeVideoButton.click();
-        console.log("Closed video view.");
-        stopScript("All actions executed successfully");
-      } else {
-        stopScript("Could not find the close video button");
-      }
-    } catch (error) {
-      stopScript("Error closing the video", error);
-    }
-  };
-
-  const stopScript = (message, error = "") => {
-    let logMessage = `${message}. Reloading page...`;
-    if (error) {
-      console.log({ message: logMessage, error });
-    } else {
-      console.log(logMessage);
-    }
-    setTimeout(() => window.location.reload(), 1000);
   };
 
   try {
@@ -126,4 +132,9 @@ const initiateRepostsVideosRemoval = async () => {
   }
 };
 
-initiateRepostsVideosRemoval();
+// Initialize the script with error handling
+try {
+  initiateRepostsVideosRemoval();
+} catch (error) {
+  console.error("Failed to start the reposts removal script:", error);
+}
