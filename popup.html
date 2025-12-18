@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title data-i18n="appTitle">TikTok All Reposted Videos Remover</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <a
+        class="logo"
+        href="https://chromewebstore.google.com/detail/tiktok-all-reposted-videos-remover/amgpfdpibiacligkkkbeonfhmonkgjhg"
+        target="_blank"
+      >
+        <img src="icon.png" alt="TikTok Remover Logo" />
+        <h1 class="title" data-i18n="appTitle">
+          TikTok All Reposted Videos Remover
+        </h1>
+      </a>
+
+      <div class="header-icons">
+        <div
+          class="donate-button"
+          id="donateButton"
+          data-i18n-title="donateTooltip"
+          title="Support the project"
+        >
+          <div class="material-icons">favorite</div>
+        </div>
+        <div class="menu-wrapper">
+          <div class="menu" title="More tools">
+            <div class="material-icons">help_outline</div>
+          </div>
+          <div class="dropdown-menu">
+            <a
+              href="https://chromewebstore.google.com/detail/tiktok-all-liked-videos-r/eafmacjdgennnmhagdkdckgjokmnllci"
+              target="_blank"
+              data-i18n="linkLiked"
+            >
+              Remove All Liked Videos
+            </a>
+            <a
+              href="https://chromewebstore.google.com/detail/tiktok-all-favorite-video/cbjkccccmffolddklbkedlndlfokcpbn"
+              target="_blank"
+              data-i18n="linkFavorite"
+            >
+              Remove All Favorite Videos
+            </a>
+            <a
+              href="https://github.com/gabireze/tiktok-all-reposted-videos-remover"
+              target="_blank"
+              data-i18n="linkGitHub"
+            >
+              GitHub Repository
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="container">
+      <p class="info-box info-login">
+        <span data-i18n="step1"></span>
+      </p>
+
+      <p class="info-box info-process">
+        <span data-i18n="step2"></span>
+      </p>
+
+      <button id="startButton" class="button" data-i18n="startButton">
+        Start Removing Reposts
+      </button>
+
+      <ul class="info-list">
+        <li data-i18n="list1"></li>
+        <li data-i18n="list2"></li>
+        <li data-i18n="list3"></li>
+        <li data-i18n="list4"></li>
+        <li data-i18n="list5"></li>
+      </ul>
+
+      <p class="info-box info-warning">
+        <span data-i18n="note"></span>
+      </p>
+
+      <p class="info-box info-check">
+        <span data-i18n="tip"></span>
+      </p>
+    </div>
+
+    <script src="popup.js"></script>
+    <script src="i18n.js"></script>
+  </body>
+</html>
